@@ -13,12 +13,13 @@ const Navbar = ({ darkMode, setDarkMode }) => {
   };
 
   return (
-    <header className="bg-green-600 p-4 flex justify-between items-center shadow-md">
+    <header className="bg-emerald-700 p-4 flex justify-between items-center shadow-md">
       <h1 className="text-white text-xl sm:text-2xl font-bold">♻️ CleanEarth</h1>
       <nav className="flex items-center gap-4">
+        
+        <span className="text-white font-medium hidden sm:inline">Hello, {user?.name || "User"}</span>
         <Link to="/submit" className="text-white hover:underline">Add Report</Link>
         <Link to="/my-reports" className="text-white hover:underline">My Reports</Link>
-        <span className="text-white font-medium hidden sm:inline">Hello, {user?.name || "User"}</span>
         <button
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
           onClick={() => setDarkMode(!darkMode)}
@@ -37,3 +38,5 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 };
 
 export default Navbar;
+
+
