@@ -45,7 +45,7 @@ const ReportDetails = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/reports/${id}`);
+      await axios.delete(`http://localhost:5000/api/reports/delete/${id}`);
       navigate("/my-reports");
     } catch (err) {
       console.error("Failed to delete report:", err);
@@ -53,7 +53,7 @@ const ReportDetails = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/edit-report/${id}`);
+    navigate(`/report/edit-report/${id}`);
   };
 
   const handleStatusChange = (e) => {

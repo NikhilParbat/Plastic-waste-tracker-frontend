@@ -17,20 +17,23 @@ const EditReport = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Fetch the report details on component mount
   useEffect(() => {
     const fetchReportDetails = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/reports/${id}`);
         setReport(res.data);
+        // Pre-fill form with the fetched data
         setFormData({
-          location: res.data.location,
-          city: res.data.city,
-          area: res.data.area,
-          wasteType: res.data.wasteType,
-          description: res.data.description,
-          status: res.data.status,
+          location: res.data.location || "",
+          city: res.data.city || "",
+          area: res.data.area || "",
+          wasteType: res.data.wasteType || "Dry",
+          description: res.data.description || "",
+          status: res.data.status || "Pending",
           image: null, // Reset image field on fetch, user can re-upload
         });
+        
       } catch (err) {
         console.error("Failed to fetch report details:", err);
       }
@@ -39,6 +42,7 @@ const EditReport = () => {
     if (id) fetchReportDetails();
   }, [id]);
 
+  // Handle changes in form inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -47,6 +51,7 @@ const EditReport = () => {
     }));
   };
 
+  // Handle image file changes
   const handleFileChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -54,6 +59,7 @@ const EditReport = () => {
     }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedReportData = { ...formData };
@@ -66,18 +72,21 @@ const EditReport = () => {
         }
       });
 
+      // Send updated data to the backend
       const res = await axios.put(`http://localhost:5000/api/reports/${id}`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
+      // Redirect to the updated report details page
       navigate(`/report/${id}`);
     } catch (err) {
       console.error("Error updating report:", err);
     }
   };
 
+  // Loading state until report data is fetched
   if (!report) return <p className="text-center mt-10 text-lg text-gray-500">Loading...</p>;
 
   return (
@@ -94,21 +103,6 @@ const EditReport = () => {
         <h2 className="text-4xl font-bold text-center mb-10">✏️ Edit Report</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Location */}
-          <div>
-            <label htmlFor="location" className="block text-lg font-medium mb-2">
-              📍 Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg p-3"
-              required
-            />
-          </div>
 
           {/* City */}
           <div>
@@ -171,24 +165,6 @@ const EditReport = () => {
               className="w-full border border-gray-300 rounded-lg p-3"
               rows="4"
             />
-          </div>
-
-          {/* Status */}
-          <div>
-            <label htmlFor="status" className="block text-lg font-medium mb-2">
-              📊 Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg p-3"
-            >
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
-            </select>
           </div>
 
           {/* Image Upload */}

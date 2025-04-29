@@ -73,7 +73,7 @@ const AdminDashboard = () => {
                   />
                   <div className="flex-grow">
                     <h3 className="text-xl font-semibold text-emerald-700 dark:text-emerald-400 mb-2">
-                      {report.location}
+                    {report.area}, {report.city} 
                     </h3>
                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                       📝 {report.description || "No description provided."}
