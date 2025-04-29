@@ -1,0 +1,90 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+    padding: 20px;
+  }
+  
+  /* Form Styling */
+  form {
+    max-width: 500px;
+    margin: 30px auto;
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  form input,
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  form button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+  }
+  
+  form button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Dashboard Styling */
+  .admin-dashboard {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .report-card {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+  }
+  
+  .report-card img {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+    border-radius: 6px;
+  }
+  
+  /* Navbar (optional if you add later) */
+  .navbar {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .navbar a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+  }
+  
+  .navbar a:hover {
+    text-decoration: underline;
+  }
+  
