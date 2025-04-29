@@ -6,7 +6,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchReports = async () => {
-      const res = await axios.get('/api/reports');
+      const res = await axios.get('http://localhost:5000/api/reports/all');
       setReports(res.data);
     };
     fetchReports();
