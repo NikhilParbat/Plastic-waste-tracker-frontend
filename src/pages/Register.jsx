@@ -1,4 +1,3 @@
-// src/pages/Register.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,34 +40,58 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleRegister}>
-      <h2>Register</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Full Name"
-        value={form.name}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Register</button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300">
+      <div className="bg-white p-8 rounded-xl w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Create an Account</h2>
+        <form onSubmit={handleRegister} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="John Doe"
+              value={form.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            Register
+          </button>
+        </form>
+        <p className="mt-4 text-sm text-gray-600 text-center">
+          Already have an account? <a href="/" className="text-blue-700 font-medium hover:underline">Login</a>
+        </p>
+      </div>
+    </div>
   );
 };
 

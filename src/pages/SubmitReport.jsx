@@ -1,156 +1,137 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "./SubmitReport.css";
+import axios from "axios";
+import Navbar from "../components/Navbar";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const customIcon = L.icon({
-    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    shadowSize: [41, 41],
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  shadowSize: [41, 41],
 });
 
-function LocationPicker({ setLocation }) {
-    useMapEvents({
-        click(e) {
-            const { lat, lng } = e.latlng;
-            setLocation(`${lat}, ${lng}`);
-        },
-    });
-    return null;
-}
+const LocationPicker = ({ setLocation }) => {
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      setLocation(`${lat}, ${lng}`);
+    },
+  });
+  return null;
+};
 
-function SubmitReport() {
-    const [location, setLocation] = useState("");
-    const [userLocation, setUserLocation] = useState([20, 78]);
-    const [image, setImage] = useState(null);
-    const [description, setDescription] = useState("");
-    const [wasteType, setWasteType] = useState("wet");
-    const [reports, setReports] = useState([]);
-    const [darkMode, setDarkMode] = useState(false);
-    const { getValue } = useLocalStorage();
-    const user = getValue("userInfo");
+const SubmitReport = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  const [location, setLocation] = useState("");
+  const [userLocation, setUserLocation] = useState([18.4926, 74.0245]);
+  const [image, setImage] = useState(null);
+  const [description, setDescription] = useState("");
+  const [wasteType, setWasteType] = useState("Wet");
+  const [city, setCity] = useState(""); // New field for city
+  const [area, setArea] = useState(""); // New field for area
+  const { getValue } = useLocalStorage();
+  const user = getValue("userInfo");
 
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setUserLocation([latitude, longitude]);
-                    setLocation(`${latitude}, ${longitude}`);
-                },
-                (error) => console.error("Error getting location:", error),
-                { enableHighAccuracy: true }
-            );
-        }
-    }, []);
-
-    useEffect(() => {
-        if (user?._id) {
-            axios.get(`http://localhost:5000/api/reports/${user._id}`)
-                .then(response => setReports(response.data.reports))
-                .catch(error => console.error("Error fetching reports:", error));
-        }
-    }, [user]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!location || !image || !user?._id) {
-            alert("Please select a location, upload an image, and ensure you're logged in.");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("user", user._id);
-        formData.append("location", location);
-        formData.append("image", image);
-        formData.append("description", description);
-        formData.append("wasteType", wasteType);
-
-        try {
-            await axios.post("http://localhost:5000/api/reports/", formData);
-            alert("Report submitted successfully!");
-            setLocation("");
-            setImage(null);
-            setDescription("");
-            setWasteType("Wet");
-            window.location.reload();
-        } catch (error) {
-            console.error("Error submitting report:", error);
-            alert("Failed to submit report.");
-        }
-    };
-
-    return (
-        <div className={darkMode ? "dark-mode" : ""}>
-            <header>
-                <h1>🌍 Plastic Waste Reporter</h1>
-                <button className="toggle-btn" onClick={() => setDarkMode(!darkMode)}>
-                    {darkMode ? "☀ Light Mode" : "🌙 Dark Mode"}
-                </button>
-            </header>
-
-            <main>
-                <section className="map-section">
-                    <h2>📍 Select Waste Location</h2>
-                    <MapContainer center={userLocation} zoom={13} className="map-container">
-                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <LocationPicker setLocation={setLocation} />
-                        {location && <Marker position={location.split(",").map(Number)} icon={customIcon} />}
-                    </MapContainer>
-                    <p className="location-text">Selected Location: <b>{location || "Click on the map to select"}</b></p>
-                </section>
-
-                <section className="form-section">
-                    <h2>📝 Report Waste</h2>
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            type="file"
-                            onChange={(e) => setImage(e.target.files[0])}
-                            className="file-input"
-                        />
-                        <select
-                            value={wasteType}
-                            onChange={(e) => setWasteType(e.target.value)}
-                        >
-                            <option value="Wet">Wet Waste</option>
-                            <option value="Dry">Dry Waste</option>
-                            <option value="Plastic">Plastic</option>
-                        </select>
-                        <textarea
-                            placeholder="Enter description..."
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="text-area"
-                        />
-                        <button type="submit" className="submit-btn">Submit Report</button>
-                    </form>
-                </section>
-
-                <section className="reports-section">
-                    <h2>📜 Reported Waste</h2>
-                    {/* <div className="reports-container">
-                        {reports.map((report) => (
-                            <div key={report[0]} className="report-card">
-                                <p><b>📍 {report[1]}</b></p>
-                                <p>📝 {report[3]}</p>
-                                <p>🗑️ Type: {report[4]}</p>
-                            </div>
-                        ))}
-                    </div> */}
-                </section>
-            </main>
-
-            <footer>
-                <p>🌱 Keep the environment clean! 🚮</p>
-            </footer>
-        </div>
+  useEffect(() => {
+    navigator.geolocation?.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation([latitude, longitude]);
+        setLocation(`${latitude}, ${longitude}`);
+      },
+      (err) => console.error(err),
+      { enableHighAccuracy: true }
     );
-}
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!location || !image || !user?._id || !city || !area) {
+      return alert("Missing required fields.");
+    }
+
+    const formData = new FormData();
+    formData.append("user", user._id);
+    formData.append("location", location);
+    formData.append("image", image);
+    formData.append("description", description);
+    formData.append("wasteType", wasteType);
+    formData.append("city", city); // Append city field
+    formData.append("area", area); // Append area field
+    formData.append("status", "Pending"); // Default status
+
+    try {
+      await axios.post("http://localhost:5000/api/reports/", formData);
+      alert("Report submitted!");
+      setLocation("");
+      setImage(null);
+      setDescription("");
+      setWasteType("Wet");
+      setCity(""); // Reset city
+      setArea(""); // Reset area
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to submit report.");
+    }
+  };
+
+  return (
+    <div className={darkMode ? "dark bg-gray-900 text-white" : "bg-gray-100 text-gray-900"}>
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+      <main className="container mx-auto px-4 py-6">
+        <section className="mb-8 ">
+          <h2 className="text-2xl font-semibold mb-4 text-center">📍 Select Waste Location</h2>
+          <div className="h-[400px] rounded-lg overflow-hidden shadow-md">
+            <MapContainer center={userLocation} zoom={13} className="h-full w-full">
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <LocationPicker setLocation={setLocation} />
+              {location && <Marker position={location.split(",").map(Number)} icon={customIcon} />}
+            </MapContainer>
+          </div>
+          <p className="mt-2 font-medium">Selected Location: <b>{location}</b></p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-center">📝 Report Waste</h2>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto">
+            <input type="file" onChange={(e) => setImage(e.target.files[0])} className="w-full p-2 border rounded" />
+            <select value={wasteType} onChange={(e) => setWasteType(e.target.value)} className="w-full p-2 border rounded">
+              <option value="Wet">Wet Waste</option>
+              <option value="Dry">Dry Waste</option>
+              <option value="Plastic">Plastic</option>
+            </select>
+            <textarea
+              placeholder="Enter description..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Enter City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Enter Area"
+              value={area}
+              onChange={(e) => setArea(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition ">
+              Submit Report
+            </button>
+          </form>
+        </section>
+      </main>
+    </div>
+  );
+};
 
 export default SubmitReport;

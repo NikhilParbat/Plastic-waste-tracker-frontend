@@ -4,7 +4,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-
+import MyReports from "./pages/MyReports";
+import ReportDetails from "./pages/ReportDetails";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./authContext";
 // src/main.jsx or App.jsx
@@ -24,6 +25,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/my-reports" element={<MyReports />} />
+          <Route path="/report/:id" element={<ReportDetails />} /> 
           <Route path="/register" element={
               <Register />}/>
           <Route
